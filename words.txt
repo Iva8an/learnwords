@@ -1,0 +1,4 @@
+dog = barking animal
+cat = meowing animal
+pasta = tasty things
+nike = clothing brand
