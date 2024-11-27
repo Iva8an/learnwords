@@ -2,8 +2,23 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <cctype>
+#include <locale>
 
 using namespace std;
+
+inline void ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+        return !std::isspace(ch);
+    }));
+}
+
+inline void rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
+        return !std::isspace(ch);
+    }).base(), s.end());
+}
 
 int main() {
     string fileName = "words.txt";
@@ -14,8 +29,12 @@ int main() {
     while (getline(file, row)) {
         size_t equation = row.find('=');
         if (equation != string::npos) {
-            words.push_back(row.substr(0, equation));
-            definitions.push_back(row.substr(equation + 1));
+            string left = row.substr(0, equation);
+            rtrim(left);
+            words.push_back(left);
+            string right = row.substr(equation + 1);
+            ltrim(right);
+            definitions.push_back(right);
         }
     }
     file.close();
@@ -30,7 +49,7 @@ int main() {
 
         bool found = false;
         for (int i = 0; i < words.size(); ++i) {
-            if (words[i] == searchword || definitions[i] == words) {
+            if (words[i] == searchword || definitions[i] == words[i]) {
                 cout << "Answer: " << (words[i] == searchword ? definitions[i] : words[i]) << endl;
                 found = true;
                 break;
